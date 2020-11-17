@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+.chat {
+  position: relative;
+  height: 400px;
+  width: 220px;
+  border: 1px solid rgb(109, 185, 247);
+}
+.chat .inner {
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+.chat .inner input[type='text'],
+.chat .inner input[type='submit'] {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid rgb(212, 212, 212);
+  border-bottom: 1px solid rgb(212, 212, 212);
+  padding: 0.5rem;
+}
+
+.chat .inner input[type='submit'] {
+  border-top: 0;
+  background: 1px solid rgb(235, 235, 235);
+}
+
+.chat .inner .message {
+  padding: 0.25rem 0;
+}
+
+.chat .inner .message:nth-child(odd) {
+  background-color: rgb(237, 247, 255);
+}
