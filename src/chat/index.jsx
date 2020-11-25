@@ -4,33 +4,57 @@ import useWebsocket from './use-websocket';
 import './styles.css';
 
 function Chat({ match }) {
-  const { socket, readyState, reconnecting, messages } = useWebsocket(
-    {
-      url: 'ws://127.0.0.1:3002',
-      onConnected,
-    },
-  );
+  const {
+    socket,
+    reconnecting,
+    messages,
+    setMessages,
+  } = useWebsocket({
+    url: 'ws://127.0.0.1:3002',
+    onConnected,
+  });
   const [message, setMessage] = useState('');
+  const [recipient, setRecipient] = useState(undefined);
 
-  const user = localStorage.getItem('userId');
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const { recipientId } = match.params;
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:3001/users/${recipientId}`)
+      .then((res) => res.json())
+      .then((json) => setRecipient(json));
+
+    fetch(`http://127.0.0.1:3001/chats/${recipientId}/${user._id}`)
+      .then((res) => res.json())
+      .then((json) =>
+        setMessages(
+          json.map((message) => {
+            return {
+              type: 'say',
+              ...message,
+            };
+          }),
+        ),
+      );
+  }, []);
 
   function onConnected(socket) {
     socket.send(
       JSON.stringify({
         type: 'connect',
-        user,
+        userId: user._id,
       }),
     );
   }
 
   function sendMessage(e) {
-    const { recipient } = match.params;
     e.preventDefault();
     socket.send(
       JSON.stringify({
         type: 'say',
-        sender: user,
-        recipient,
+        sender: user._id,
+        recipient: recipient._id,
         text: message,
       }),
     );
@@ -47,7 +71,8 @@ function Chat({ match }) {
             .filter((m) => m.type === 'say')
             .map((m, i) => (
               <div key={i} className='message'>
-                {m.sender === user ? 'You' : m.sender}: {m.text}
+                {m.sender === user._id ? 'You' : recipient.name}:{' '}
+                {m.text}
               </div>
             ))}
           <input
@@ -58,6 +83,7 @@ function Chat({ match }) {
           <input type='submit' value='Send' />
         </div>
       </div>
+      {recipient && <div>Chatting with {recipient.name}</div>}
     </form>
   );
 }

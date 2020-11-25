@@ -10,7 +10,7 @@ export default function App() {
         <Route exact path='/'>
           <Login />
         </Route>
-        <Route path='/chat/:recipient'>
+        <Route path='/chat/:recipientId'>
           <Chat />
         </Route>
       </Switch>

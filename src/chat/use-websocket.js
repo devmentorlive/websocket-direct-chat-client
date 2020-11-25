@@ -25,7 +25,7 @@ export default function useWebsocket({ url, onConnected }) {
 
     socket.current.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log('message received ' + data);
+      console.log('message received ', data);
       setMessages((prev) => [...prev, data]);
     };
 
@@ -55,5 +55,6 @@ export default function useWebsocket({ url, onConnected }) {
     readyState: readyState,
     reconnecting,
     messages,
+    setMessages,
   };
 }
